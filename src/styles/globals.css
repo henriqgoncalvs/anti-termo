@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* #region  /**=========== Primary Color =========== */
+  --tw-color-primary-50: 224 242 254;
+  --tw-color-primary-100: 186 230 253;
+  --tw-color-primary-200: 125 211 252;
+  --tw-color-primary-300: 56 189 248;
+  --tw-color-primary-400: 3 105 161;
+  --tw-color-primary-500: 43 88 117;
+  --tw-color-primary-600: 52 64 72;
+  --tw-color-primary-700: 33 37 40;
+  --tw-color-primary-800: 21 23 25;
+  --tw-color-primary-900: 17 17 20;
+  --color-primary-50: rgb(var(--tw-color-primary-50));
+  --color-primary-100: rgb(var(--tw-color-primary-100));
+  --color-primary-200: rgb(var(--tw-color-primary-200));
+  --color-primary-300: rgb(var(--tw-color-primary-300));
+  --color-primary-400: rgb(var(--tw-color-primary-400));
+  --color-primary-500: rgb(var(--tw-color-primary-500));
+  --color-primary-600: rgb(var(--tw-color-primary-600));
+  --color-primary-700: rgb(var(--tw-color-primary-700));
+  --color-primary-800: rgb(var(--tw-color-primary-800));
+  --color-primary-900: rgb(var(--tw-color-primary-900));
+  /* #endregion  /**======== Primary Color =========== */
+}
+
+@layer base {
+  /* #region  /**=========== Typography =========== */
+  .h0 {
+    @apply font-primary text-3xl font-black md:text-5xl;
+  }
+
+  h1,
+  .h1 {
+    @apply font-primary text-2xl font-black md:text-4xl;
+  }
+
+  h2,
+  .h2 {
+    @apply font-primary text-xl font-black md:text-3xl;
+  }
+
+  h3,
+  .h3 {
+    @apply font-primary text-lg font-bold md:text-2xl;
+  }
+
+  h4,
+  .h4 {
+    @apply font-primary text-base font-bold md:text-lg;
+  }
+
+  body {
+    @apply bg-primary-900 text-champagne uppercase;
+  }
+
+  body,
+  .p {
+    @apply font-primary text-sm md:text-base;
+  }
+  /* #endregion  /**======== Typography =========== */
+}

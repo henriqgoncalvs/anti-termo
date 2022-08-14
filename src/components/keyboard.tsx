@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { BsBackspace } from 'react-icons/bs';
 
-import { useGameStore } from '@/store/game-store';
+import { KeyboardLetterStateTypes, useGameStore } from '@/store/game-store';
 
 export const KEYS = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '', ''],
@@ -24,7 +24,8 @@ const isParsableKey = (key: string): key is ParseKey => {
 const keyStateStyles = {
   miss: 'bg-primary-600 opacity-30',
   present: 'bg-yellow-500',
-  match: 'bg-green-500',
+  match: 'bg-red-500',
+  'present match': 'present-match-keyboard-state',
 };
 
 type KeyboardP = {
@@ -34,7 +35,10 @@ type KeyboardP = {
 export const Keyboard = ({ onClick: onClickProps }: KeyboardP) => {
   const { keyboardLetterState } = useGameStore();
   const [keyboardLetterStateCopy, setKeyboardLetterStateCopy] = useState<{
-    [letter: string]: 'present' | 'miss' | 'match';
+    [letter: string]: {
+      state: KeyboardLetterStateTypes[];
+      index: number;
+    };
   }>({});
 
   useEffect(() => {
@@ -55,6 +59,31 @@ export const Keyboard = ({ onClick: onClickProps }: KeyboardP) => {
     onClickProps(returnProps.toLowerCase());
   };
 
+  const checkLetterStateStyles = (key: string) => {
+    if (keyboardLetterStateCopy[key.toLocaleLowerCase()]) {
+      if (
+        keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('match') &&
+        keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('present')
+      ) {
+        return keyStateStyles['present match'];
+      }
+
+      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('match')) {
+        return keyStateStyles['match'];
+      }
+
+      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('present')) {
+        return keyStateStyles['present'];
+      }
+
+      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('miss')) {
+        return keyStateStyles['miss'];
+      }
+    }
+
+    return '';
+  };
+
   return (
     <div className='grid gap-1 md:gap-2 select-none mx-auto '>
       {KEYS.map((row, rowIndex) => (
@@ -67,16 +96,14 @@ export const Keyboard = ({ onClick: onClickProps }: KeyboardP) => {
               return <div key={`empty-key-${letterIndex}`} className='w-1 pointer-events-none' />;
             }
 
-            const letterState = Object.keys(keyboardLetterStateCopy).length
-              ? keyStateStyles[keyboardLetterStateCopy[key.toLocaleLowerCase()]]
-              : '';
+            const letterState = checkLetterStateStyles(key);
 
             return (
               <button
                 onClick={onClick}
                 key={key + letterIndex}
                 className={clsx(
-                  'md:px-3 px-2 py-5 rounded-md md:text-2xl text-base font-bold transition-all md:min-w-[2.5rem] min-w-[1.85rem] flex items-center justify-center',
+                  'overflow-hidden md:px-3 px-2 py-5 rounded-md md:text-2xl text-base font-bold transition-all md:min-w-[2.5rem] min-w-[1.85rem] flex items-center justify-center',
                   letterState ? letterState : key !== '' ? 'bg-gray-600' : '',
                 )}
               >

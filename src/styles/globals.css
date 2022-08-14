@@ -76,4 +76,7 @@
   body {
     @apply h-full;
   }
+  .present-match-keyboard-state {
+    background: linear-gradient(to right, #eab308 50%, #ef4444 50%);
+  }
 }

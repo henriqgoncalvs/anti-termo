@@ -16,9 +16,7 @@ const Home: NextPage = () => {
 
   const [rows, setRows] = useState<Letter[][] | undefined>(undefined);
 
-  const [addGuessLetter] = useGuess({ setRows });
-
-  const [showInvalidGuess, setInvalidGuess] = useState(false);
+  const [addGuessLetter, showInvalidGuess] = useGuess({ setRows });
 
   useEffect(() => {
     if (!rows) {
@@ -32,26 +30,16 @@ const Home: NextPage = () => {
     });
   }, []);
 
-  useEffect(() => {
-    let id: NodeJS.Timeout;
-    if (showInvalidGuess) {
-      id = setTimeout(() => setInvalidGuess(false), 2000);
-    }
-
-    return () => {
-      clearTimeout(id);
-    };
-  }, [showInvalidGuess]);
-
   return (
     <Layout>
       <div className='flex flex-col flex-1 items-center justify-center'>
+        {showInvalidGuess[0] && showInvalidGuess[1].map((error) => <p key={error}>{error}</p>)}
         <div className='grid grid-rows-6 gap-[0.3rem] mb-4'>
           {rows?.map((letters, index) => (
             <WordRow
               key={index}
               letters={letters}
-              className={showInvalidGuess && curRow === index ? `animate-bounce` : ``}
+              className={showInvalidGuess[0] && curRow === index ? `animate-bounce` : ``}
             />
           ))}
         </div>

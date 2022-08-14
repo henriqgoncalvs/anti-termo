@@ -1,26 +1,31 @@
 import words from '@/data/words.json';
 
-type Normalized = keyof typeof words.normalized;
+export type Normalized = keyof typeof words.normalized;
 
 export const WORD_LENGTH = 5;
 
-export const getSolution = () => {
-  const randomIndex = Math.floor(Math.random() * words.valid.length);
+// 1 January 2022 Game Epoch
+export const firstGameDate = new Date(2022, 8, 14);
 
-  const randomWord = words.valid[randomIndex];
-  const normalizedRandomWord =
-    words.normalized[words.valid[randomIndex] as Normalized] || randomWord;
+export const getIndex = (today: Date) => {
+  const start = new Date(firstGameDate);
+  let index = -1;
+  do {
+    index++;
+    start.setDate(start.getDate() + 1);
+  } while (start <= today);
+
+  return index;
+};
+
+export const getSolution = () => {
+  const index = getIndex(new Date());
+
+  const randomWord = words.valid[index % words.valid.length];
 
   return {
     solution: randomWord,
-    normalizedSolution: normalizedRandomWord,
   };
-};
-
-export const isValidWord = (guess: string): boolean => {
-  const guessNormalized = words.normalized[guess as Normalized] || guess;
-
-  return words.invalid.concat(words.valid).includes(guessNormalized);
 };
 
 export const normalizeGuess = (guess: string): string => {

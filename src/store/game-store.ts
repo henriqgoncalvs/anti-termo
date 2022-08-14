@@ -3,16 +3,17 @@ import { persist } from 'zustand/middleware';
 
 import { computeGuess, getSolution, Letter, normalizeGuess } from '@/utils/word-utils';
 
-export const GUESS_LENGTH = 6;
+export const GUESS_LENGTH = 7;
+
+export type KeyboardLetterStateTypes = 'miss' | 'present' | 'match';
 
 interface GameStoreState {
   solution: string;
-  normalizedSolution: string;
   tries: Array<Letter[]>;
   gameState: 'playing' | 'won' | 'lost';
   addTry: (guess: string) => void;
   curRow: number;
-  keyboardLetterState: { [letter: string]: 'present' | 'miss' | 'match' };
+  keyboardLetterState: { [letter: string]: { state: KeyboardLetterStateTypes[]; index: number } };
 }
 
 export const useGameStore = create<GameStoreState>()(
@@ -23,7 +24,7 @@ export const useGameStore = create<GameStoreState>()(
 
         const result = computeGuess(normGuess, get().solution, get().curRow);
 
-        const didWin = result.every((l) => l.state === 'match');
+        const didLose = result.every((l) => l.state === 'match');
 
         const tries = get().tries;
 
@@ -38,16 +39,18 @@ export const useGameStore = create<GameStoreState>()(
 
           const currentLetterState = keyboardLetterState[resultGuessLetter];
 
-          if (currentLetterState === 'match') {
-            return;
-          }
-
-          if (currentLetterState === 'present' || currentLetterState === 'miss') {
-            return;
-          }
-
           if (r.state) {
-            keyboardLetterState[resultGuessLetter] = r.state;
+            if (!currentLetterState) {
+              keyboardLetterState[resultGuessLetter] = { state: [r.state], index };
+              return;
+            }
+
+            if (r.state !== 'miss') {
+              if (currentLetterState && !currentLetterState.state.includes(r.state)) {
+                keyboardLetterState[resultGuessLetter].state.push(r.state);
+                return;
+              }
+            }
           }
         });
 
@@ -55,7 +58,7 @@ export const useGameStore = create<GameStoreState>()(
           curRow: newCurRow,
           tries,
           keyboardLetterState: keyboardLetterState,
-          gameState: didWin ? 'won' : newCurRow === GUESS_LENGTH ? 'lost' : 'playing',
+          gameState: didLose ? 'lost' : newCurRow === GUESS_LENGTH ? 'won' : 'playing',
         }));
       };
 
@@ -103,6 +106,13 @@ export const useGameStore = create<GameStoreState>()(
             { letter: '', cursor: { x: 2, y: 5 } },
             { letter: '', cursor: { x: 3, y: 5 } },
             { letter: '', cursor: { x: 4, y: 5 } },
+          ],
+          [
+            { letter: '', cursor: { x: 0, y: 6 } },
+            { letter: '', cursor: { x: 1, y: 6 } },
+            { letter: '', cursor: { x: 2, y: 6 } },
+            { letter: '', cursor: { x: 3, y: 6 } },
+            { letter: '', cursor: { x: 4, y: 6 } },
           ],
         ],
         curRow: 0,

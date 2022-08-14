@@ -24,7 +24,7 @@ const WordRow = ({ letters = [], className = '' }: WordRowProps) => {
 const characterStateStyles = {
   miss: 'bg-gray-800 border-gray-800',
   present: 'bg-yellow-500 border-yellow-500',
-  match: 'bg-green-500 border-green-500',
+  match: 'bg-red-500 border-red-500',
 };
 
 interface CharacterBoxProps {

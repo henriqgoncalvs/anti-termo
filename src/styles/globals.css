@@ -25,6 +25,7 @@
   --color-primary-800: rgb(var(--tw-color-primary-800));
   --color-primary-900: rgb(var(--tw-color-primary-900));
   /* #endregion  /**======== Primary Color =========== */
+  --inset: env(safe-area-inset-top);
 }
 
 @layer base {
@@ -62,4 +63,17 @@
     @apply font-primary text-sm md:text-base;
   }
   /* #endregion  /**======== Typography =========== */
+}
+
+@layer components {
+  #__next {
+    min-height: calc(100vh - var(--inset));
+    margin-top: var(--inset);
+
+    @apply flex flex-col;
+  }
+  html,
+  body {
+    @apply h-full;
+  }
 }

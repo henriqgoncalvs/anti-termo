@@ -1,80 +1,67 @@
 import type { NextPage } from 'next';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-import Seo from '@/components/Seo';
+import { useGuess } from '@/hooks/useGuess';
+
+import { Keyboard } from '@/components/keyboard';
+import { Layout } from '@/components/layout';
+import WordRow from '@/components/word-row';
+
+import { useGameStore } from '@/store/game-store';
+
+import { Letter } from '@/utils/word-utils';
 
 const Home: NextPage = () => {
+  const { curRow, tries } = useGameStore();
+
+  const [rows, setRows] = useState<Letter[][] | undefined>(undefined);
+
+  const [addGuessLetter] = useGuess({ setRows });
+
+  const [showInvalidGuess, setInvalidGuess] = useState(false);
+
+  useEffect(() => {
+    if (!rows) {
+      setRows(tries);
+    }
+  }, [tries, rows]);
+
+  useEffect(() => {
+    useGameStore.subscribe((state) => {
+      setRows([...state.tries]);
+    });
+  }, []);
+
+  useEffect(() => {
+    let id: NodeJS.Timeout;
+    if (showInvalidGuess) {
+      id = setTimeout(() => setInvalidGuess(false), 2000);
+    }
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [showInvalidGuess]);
+
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center py-2'>
-      <Seo />
-
-      <main className='flex w-full flex-1 flex-col items-center justify-center px-20 text-center'>
-        <h1 className='text-6xl font-bold'>
-          Welcome to{' '}
-          <a className='text-primary-400' href='https://nextjs.org'>
-            Next.js!
-          </a>
-        </h1>
-
-        <p className='mt-3 text-2xl'>
-          Get started by editing{' '}
-          <code className='rounded-md bg-caramel p-3 font-mono text-lg'>pages/index.tsx</code>
-        </p>
-
-        <div className='mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full'>
-          <a
-            href='https://nextjs.org/docs'
-            className='mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600'
-          >
-            <h3 className='text-2xl font-bold'>Documentation &rarr;</h3>
-            <p className='mt-4 text-xl'>
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href='https://nextjs.org/learn'
-            className='mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600'
-          >
-            <h3 className='text-2xl font-bold'>Learn &rarr;</h3>
-            <p className='mt-4 text-xl'>
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href='https://github.com/vercel/next.js/tree/canary/examples'
-            className='mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600'
-          >
-            <h3 className='text-2xl font-bold'>Examples &rarr;</h3>
-            <p className='mt-4 text-xl'>
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href='https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-            className='mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600'
-          >
-            <h3 className='text-2xl font-bold'>Deploy &rarr;</h3>
-            <p className='mt-4 text-xl'>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+    <Layout>
+      <div className='flex flex-col flex-1 items-center justify-center'>
+        <div className='grid grid-rows-6 gap-[0.3rem] mb-4'>
+          {rows?.map((letters, index) => (
+            <WordRow
+              key={index}
+              letters={letters}
+              className={showInvalidGuess && curRow === index ? `animate-bounce` : ``}
+            />
+          ))}
         </div>
-      </main>
-
-      <footer className='flex h-24 w-full items-center justify-center border-t'>
-        <a
-          className='flex items-center justify-center gap-2'
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Powered by <Image src='/vercel.svg' alt='Vercel Logo' width={72} height={16} />
-        </a>
-      </footer>
-    </div>
+      </div>
+      <Keyboard
+        onClick={(letter: string) => {
+          addGuessLetter(letter);
+        }}
+      />
+    </Layout>
   );
 };
 

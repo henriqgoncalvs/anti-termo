@@ -1,5 +1,5 @@
 # https://github.com/kentcdodds/kentcdodds.com/blob/main/.github/workflows/deployment.yml
-name: Code Check
+name: 🚀 Deploy
 on:
   push:
     branches:
@@ -7,15 +7,36 @@ on:
   pull_request: {}
 
 jobs:
-  install:
+  changes:
+    name: 🔎 Determine deployable changes
     runs-on: ubuntu-latest
+    outputs:
+      DEPLOYABLE: ${{steps.changes.outputs.DEPLOYABLE}}
     steps:
-      - uses: pnpm/action-setup@v2.2.2
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
         with:
-          version: 6.0.2
+          fetch-depth: '50'
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: 🔎 Determine deployable changes
+        id: changes
+        run: >-
+          echo ::set-output name=DEPLOYABLE::$(node ./other/is-deployable.js ${{
+          github.sha }})
+
+      - name: ❓ Deployable
+        run: >-
+          echo "DEPLOYABLE: ${{steps.changes.outputs.DEPLOYABLE}}"
 
   lint:
     name: ⬣ ESLint
+    needs: [changes]
+    if: needs.changes.outputs.DEPLOYABLE == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -33,10 +54,12 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: 🔬 Lint
-        run: pnpm lint:strict
+        run: npm run lint
 
   typecheck:
     name: ʦ TypeScript
+    needs: [changes]
+    if: needs.changes.outputs.DEPLOYABLE == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -54,46 +77,4 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: 🔎 Type check
-        run: pnpm typecheck
-
-  prettier:
-    name: 💅 Prettier
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
-
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-
-      - name: 🔎 Type check
-        run: pnpm format:check
-
-  # test:
-  #   name: 🃏 Test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 🛑 Cancel Previous Runs
-  #       uses: styfle/cancel-workflow-action@0.9.1
-
-  #     - name: ⬇️ Checkout repo
-  #       uses: actions/checkout@v2
-
-  #     - name: ⎔ Setup node
-  #       uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 16
-
-  #     - name: 📥 Download deps
-  #       uses: bahmutov/npm-install@v1
-
-  #     - name: 🃏 Run jest
-  #       run: yarn test
+        run: npm run typecheck

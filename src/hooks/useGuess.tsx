@@ -10,7 +10,9 @@ import { useGameStore } from '@/store/game-store';
 
 import { Letter, Normalized, WORD_LENGTH } from '@/utils/word-utils';
 
-const VALID_KEYS = KEYS.flatMap((row) => row.map((key) => key.toLowerCase())).filter(Boolean);
+export const VALID_KEYS = KEYS.flatMap((row) => row.map((key) => key.toLowerCase())).filter(
+  Boolean,
+);
 
 export function useGuess({
   setRows,
@@ -50,12 +52,6 @@ export function useGuess({
 
       return;
     }
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    const letter = e.key.toLowerCase();
-
-    if (VALID_KEYS.includes(letter) && gameState === 'playing') addGuessLetter(letter);
   };
 
   const isValidWord = (guess: string): boolean => {
@@ -224,13 +220,6 @@ export function useGuess({
       clearTimeout(id);
     };
   }, [showInvalidGuess]);
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
 
   return [addGuessLetter, showInvalidGuess];
 }

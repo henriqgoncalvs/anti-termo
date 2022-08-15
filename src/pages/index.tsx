@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useGuess } from '@/hooks/useGuess';
+import { useGuess, VALID_KEYS } from '@/hooks/useGuess';
 
 import { Keyboard } from '@/components/keyboard';
 import { Layout } from '@/components/layout';
@@ -12,11 +12,22 @@ import { useGameStore } from '@/store/game-store';
 import { Letter } from '@/utils/word-utils';
 
 const Home: NextPage = () => {
-  const { curRow, tries } = useGameStore();
+  const { curRow, tries, gameState } = useGameStore();
 
   const [rows, setRows] = useState<Letter[][] | undefined>(undefined);
 
   const [addGuessLetter, showInvalidGuess] = useGuess({ setRows });
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      const letter = e.key.toLowerCase();
+
+      if (VALID_KEYS.includes(letter) && gameState === 'playing') {
+        addGuessLetter(letter);
+      }
+    },
+    [addGuessLetter, gameState],
+  );
 
   useEffect(() => {
     if (!rows) {
@@ -29,6 +40,13 @@ const Home: NextPage = () => {
       setRows([...state.tries]);
     });
   }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return (
     <Layout>

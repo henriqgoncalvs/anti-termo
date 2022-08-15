@@ -87,6 +87,33 @@ export function useGuess({
       return false;
     }
 
+    const guessLettersCount: { [letter: string]: number } = {};
+    const keyboardLetterStateLettersCount: { [letter: string]: number } = {};
+
+    guess.split('').forEach((letter) => {
+      if (guessLettersCount[letter]) return (guessLettersCount[letter] += 1);
+      guessLettersCount[letter] = 1;
+    });
+
+    Object.entries(keyboardLetterState).forEach(([letter, state]) => {
+      state.forEach((st) => {
+        if (st.state === 'match' || st.state === 'present') {
+          if (keyboardLetterStateLettersCount[letter])
+            return (keyboardLetterStateLettersCount[letter] += 1);
+          keyboardLetterStateLettersCount[letter] = 1;
+        }
+      });
+    });
+
+    if (!_.isEqual(guessLettersCount, keyboardLetterStateLettersCount)) {
+      Object.keys(keyboardLetterStateLettersCount).forEach((letter) => {
+        if (guessLettersCount[letter] < keyboardLetterStateLettersCount[letter]) {
+          isValid = false;
+          errorMessages.push(`Faltando: ${letter}`);
+        }
+      });
+    }
+
     guess.split('').forEach((letter, index) => {
       const letterState = keyboardLetterState[letter];
 
@@ -95,20 +122,35 @@ export function useGuess({
           if (
             st.state === 'match' &&
             st.index !== index &&
-            !letterState.some((ls) => ls.state === 'present')
+            !letterState.some((ls) => ls.state === 'present') &&
+            guess[index] !== letter
           ) {
             isValid = false;
-            errorMessages.push(`Repita ${letter} na mesma posição`);
+            errorMessages.push(`Posição errada: ${letter} 1`);
           }
 
-          if (st.state === 'present' && !guess.includes(letter)) {
-            isValid = false;
-            errorMessages.push(`${letter} precisa estar na palavra.`);
+          if (st.state === 'present') {
+            if (
+              !guess.includes(letter) ||
+              (letterState.find((ls) => ls.state === 'match') !== undefined &&
+                guess[letterState.find((ls) => ls.state === 'match')?.index || 0] !== letter)
+            ) {
+              isValid = false;
+              errorMessages.push(`Obrigatório Repetir: ${letter}`);
+            }
           }
 
           if (st.state === 'miss') {
-            isValid = false;
-            errorMessages.push(`${letter} não pode ser usado.`);
+            if (!letterState.some((ls) => ls.state === 'present' || ls.state === 'match')) {
+              errorMessages.push(`Proibido: ${letter}`);
+              isValid = false;
+              return;
+            }
+
+            if (st.index === index) {
+              errorMessages.push(`Proibido: ${letter} na posição ${index + 1}`);
+              isValid = false;
+            }
           }
         });
       } else {
@@ -122,22 +164,23 @@ export function useGuess({
             keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'match'
           ) {
             isValid = false;
-            errorMessages.push(`Repita ${keyLetStateIndex[0]} na mesma posição`);
+            errorMessages.push(`Obrigatório Repetir: ${keyLetStateIndex[0]}`);
           }
 
           if (
             keyLetStateIndex &&
-            keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'present'
+            keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'present' &&
+            !guess.includes(letter)
           ) {
             isValid = false;
-            errorMessages.push(`${keyLetStateIndex[0]} precisa estar na palavra`);
+            errorMessages.push(`Obrigatório: ${keyLetStateIndex[0]} 2`);
           }
         });
       }
     });
 
     if (!isValid) {
-      setShowInvalidGuess([true, errorMessages]);
+      setShowInvalidGuess([true, _.uniq(errorMessages)]);
     }
 
     return isValid;

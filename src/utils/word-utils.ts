@@ -5,7 +5,7 @@ export type Normalized = keyof typeof words.normalized;
 export const WORD_LENGTH = 5;
 
 // 1 January 2022 Game Epoch
-export const firstGameDate = new Date(2022, 8, 14);
+export const firstGameDate = new Date(2022, 8, 15);
 
 export const getIndex = (today: Date) => {
   const start = new Date(firstGameDate);
@@ -27,6 +27,8 @@ export const getSolution = () => {
     solution: randomWord,
   };
 };
+
+export const removeAccents = (str: string) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 export const normalizeGuess = (guess: string): string => {
   const guessNormalized = words.normalized[guess as Normalized] || guess;
@@ -52,8 +54,8 @@ export const computeGuess = (guess: string, answer: string, curRow: number): Let
     return result;
   }
 
-  const guessArray = guess.split('');
-  const answerArray = answer.split('');
+  const guessArray = removeAccents(guess).split('');
+  const answerArray = removeAccents(answer).split('');
 
   const match = guessArray.map((letter, index) => ({
     letter: letter,
@@ -65,7 +67,7 @@ export const computeGuess = (guess: string, answer: string, curRow: number): Let
   }));
 
   for (let i = guessArray.length - 1; i >= 0; i--) {
-    if (answer[i] === guessArray[i]) {
+    if (removeAccents(answer)[i] === guessArray[i]) {
       match[i].state = 'match';
       answerArray.splice(i, 1);
     }
@@ -82,5 +84,9 @@ export const computeGuess = (guess: string, answer: string, curRow: number): Let
     result.push(letter as Letter);
   });
 
-  return result;
+  return result.map((r, index) => {
+    r.letter = guess[index];
+
+    return r;
+  });
 };

@@ -36,9 +36,9 @@ export const Keyboard = ({ onClick: onClickProps }: KeyboardP) => {
   const { keyboardLetterState } = useGameStore();
   const [keyboardLetterStateCopy, setKeyboardLetterStateCopy] = useState<{
     [letter: string]: {
-      state: KeyboardLetterStateTypes[];
+      state: KeyboardLetterStateTypes;
       index: number;
-    };
+    }[];
   }>({});
 
   useEffect(() => {
@@ -62,21 +62,21 @@ export const Keyboard = ({ onClick: onClickProps }: KeyboardP) => {
   const checkLetterStateStyles = (key: string) => {
     if (keyboardLetterStateCopy[key.toLocaleLowerCase()]) {
       if (
-        keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('match') &&
-        keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('present')
+        keyboardLetterStateCopy[key.toLocaleLowerCase()].some((kls) => kls.state === 'match') &&
+        keyboardLetterStateCopy[key.toLocaleLowerCase()].some((kls) => kls.state === 'present')
       ) {
         return keyStateStyles['present match'];
       }
 
-      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('match')) {
+      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].some((kls) => kls.state === 'match')) {
         return keyStateStyles['match'];
       }
 
-      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('present')) {
+      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].some((kls) => kls.state === 'present')) {
         return keyStateStyles['present'];
       }
 
-      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].state.includes('miss')) {
+      if (keyboardLetterStateCopy[key.toLocaleLowerCase()].some((kls) => kls.state === 'miss')) {
         return keyStateStyles['miss'];
       }
     }

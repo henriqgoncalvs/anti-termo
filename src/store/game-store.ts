@@ -13,7 +13,7 @@ interface GameStoreState {
   gameState: 'playing' | 'won' | 'lost';
   addTry: (guess: string) => void;
   curRow: number;
-  keyboardLetterState: { [letter: string]: { state: KeyboardLetterStateTypes[]; index: number } };
+  keyboardLetterState: { [letter: string]: { state: KeyboardLetterStateTypes; index: number }[] };
 }
 
 export const useGameStore = create<GameStoreState>()(
@@ -41,13 +41,13 @@ export const useGameStore = create<GameStoreState>()(
 
           if (r.state) {
             if (!currentLetterState) {
-              keyboardLetterState[resultGuessLetter] = { state: [r.state], index };
+              keyboardLetterState[resultGuessLetter] = [{ state: r.state, index }];
               return;
             }
 
             if (r.state !== 'miss') {
-              if (currentLetterState && !currentLetterState.state.includes(r.state)) {
-                keyboardLetterState[resultGuessLetter].state.push(r.state);
+              if (currentLetterState && !currentLetterState.some((cur) => cur.state === r.state)) {
+                keyboardLetterState[resultGuessLetter].push({ state: r.state, index });
                 return;
               }
             }

@@ -87,35 +87,50 @@ export function useGuess({
       return false;
     }
 
-    _.uniq(guess.split('')).forEach((letter, index) => {
+    guess.split('').forEach((letter, index) => {
       const letterState = keyboardLetterState[letter];
 
       if (letterState) {
-        letterState.state.forEach((st) => {
-          if (st === 'match' && letterState.index !== index) {
+        letterState.forEach((st) => {
+          if (
+            st.state === 'match' &&
+            st.index !== index &&
+            !letterState.some((ls) => ls.state === 'present')
+          ) {
             isValid = false;
             errorMessages.push(`Repita ${letter} na mesma posição`);
           }
 
-          if (st === 'present' && !guess.includes(letter)) {
+          if (st.state === 'present' && !guess.includes(letter)) {
             isValid = false;
             errorMessages.push(`${letter} precisa estar na palavra.`);
           }
 
-          if (st === 'miss') {
+          if (st.state === 'miss') {
             isValid = false;
             errorMessages.push(`${letter} não pode ser usado.`);
           }
         });
       } else {
-        const keyboardLettersStateInIndex = Object.entries(keyboardLetterState).filter(
-          (keyState) => keyState[1].index === index,
+        const keyboardLettersStateInIndex = Object.entries(keyboardLetterState).filter((keyState) =>
+          keyState[1].filter((ks) => ks.index === index),
         );
 
         keyboardLettersStateInIndex.forEach((keyLetStateIndex) => {
-          if (keyLetStateIndex && keyLetStateIndex[1].state.includes('match')) {
+          if (
+            keyLetStateIndex &&
+            keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'match'
+          ) {
             isValid = false;
             errorMessages.push(`Repita ${keyLetStateIndex[0]} na mesma posição`);
+          }
+
+          if (
+            keyLetStateIndex &&
+            keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'present'
+          ) {
+            isValid = false;
+            errorMessages.push(`${keyLetStateIndex[0]} precisa estar na palavra`);
           }
         });
       }

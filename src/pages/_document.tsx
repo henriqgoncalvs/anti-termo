@@ -10,7 +10,6 @@ class MyDocument extends Document {
     return (
       <Html lang='pt-BR'>
         <Head>
-          <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='true' />
           <link

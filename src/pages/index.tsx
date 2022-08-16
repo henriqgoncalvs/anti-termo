@@ -6,6 +6,7 @@ import { useGuess, VALID_KEYS } from '@/hooks/useGuess';
 
 import { Keyboard } from '@/components/keyboard';
 import { Layout } from '@/components/layout';
+import { GameStateModal } from '@/components/modals/game-state-modal';
 import WordRow from '@/components/word-row';
 
 import { useGameStore } from '@/store/game-store';
@@ -18,6 +19,8 @@ const Home: NextPage = () => {
   const [rows, setRows] = useState<Letter[][] | undefined>(undefined);
 
   const [addGuessLetter, showInvalidGuess] = useGuess({ setRows });
+
+  const [isGameStateModalOpen, setIsGameStateModalOpen] = useState<boolean>(false);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -39,6 +42,10 @@ const Home: NextPage = () => {
   useEffect(() => {
     useGameStore.subscribe((state) => {
       setRows([...state.tries]);
+
+      if (state.gameState === 'won' || state.gameState === 'lost') {
+        setIsGameStateModalOpen(true);
+      }
     });
   }, []);
 
@@ -51,7 +58,15 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className='flex flex-col flex-1 items-center justify-center relative overflow-hidden'>
+      <GameStateModal isOpen={isGameStateModalOpen} setIsOpen={setIsGameStateModalOpen} />
+      <div
+        className='flex flex-col flex-1 items-center justify-center relative overflow-hidden'
+        onClick={() => {
+          if (gameState === 'lost' || gameState === 'won') {
+            setIsGameStateModalOpen((prev) => !prev);
+          }
+        }}
+      >
         <AnimatePresence>
           {showInvalidGuess[0] && (
             <motion.div

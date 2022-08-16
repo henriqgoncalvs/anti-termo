@@ -71,9 +71,9 @@ export const Seo = (props: SeoProps) => {
       {favicons.map((linkProps) => (
         <link key={linkProps.href} {...linkProps} />
       ))}
-      <meta name='msapplication-TileColor' content='#ffffff' />
+      <meta name='msapplication-TileColor' content='#212528 ' />
       <meta name='msapplication-TileImage' content='/favicon/ms-icon-144x144.png' />
-      <meta name='theme-color' content='#ffffff' />
+      <meta name='theme-color' content='#212528' />
     </Head>
   );
 };

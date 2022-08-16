@@ -25,7 +25,6 @@
   --color-primary-800: rgb(var(--tw-color-primary-800));
   --color-primary-900: rgb(var(--tw-color-primary-900));
   /* #endregion  /**======== Primary Color =========== */
-  --inset: env(safe-area-inset-top);
 }
 
 @layer base {
@@ -67,8 +66,7 @@
 
 @layer components {
   #__next {
-    min-height: calc(100vh - var(--inset));
-    margin-top: var(--inset);
+    height: calc(100vh - calc(100vh - 100%));
 
     @apply flex flex-col;
   }

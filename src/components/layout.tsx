@@ -1,5 +1,7 @@
-import { MdLeaderboard } from 'react-icons/md';
+import { useState } from 'react';
 
+import { AboutModal } from './modals/about-modal';
+import { HowToPlayModal } from './modals/how-to-play-modal';
 import { Seo } from './seo';
 
 type LayoutP = {
@@ -7,13 +9,15 @@ type LayoutP = {
 };
 
 type HeaderP = {
+  onClick?: () => void;
   children: React.ReactNode;
 };
 
-const HeaderButton = ({ children, ...restProps }: HeaderP) => {
+const HeaderButton = ({ children, onClick, ...restProps }: HeaderP) => {
   return (
     <button
       className='w-[25px] h-[25px] text-md text-caramel flex items-center justify-center border-caramel rounded-md border-2 p-1'
+      onClick={onClick}
       {...restProps}
     >
       {children}
@@ -22,12 +26,17 @@ const HeaderButton = ({ children, ...restProps }: HeaderP) => {
 };
 
 const Header = () => {
+  const [isHowToPlayModalOpen, setIsHowToPlayModalOpen] = useState<boolean>(false);
+  const [isAboutModal, setIsAboutModal] = useState<boolean>(false);
+
   return (
     <header className='bg-primary-700 p-5 w-full'>
+      <HowToPlayModal isOpen={isHowToPlayModalOpen} setIsOpen={setIsHowToPlayModalOpen} />
+      <AboutModal isOpen={isAboutModal} setIsOpen={setIsAboutModal} />
       <div className='container mx-auto'>
         <div className='flex justify-between items-center'>
           <div className='flex gap-2 items-center'>
-            <HeaderButton>?</HeaderButton>
+            <HeaderButton onClick={() => setIsHowToPlayModalOpen(true)}>?</HeaderButton>
           </div>
           <div className='flex items-center'>
             <h1 className='ml-2 text-white font-semibold text-2xl'>
@@ -36,9 +45,7 @@ const Header = () => {
             </h1>
           </div>
           <div className='flex gap-2 items-center'>
-            <HeaderButton>
-              <MdLeaderboard />
-            </HeaderButton>
+            <HeaderButton onClick={() => setIsAboutModal(true)}>i</HeaderButton>
           </div>
         </div>
       </div>

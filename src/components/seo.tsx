@@ -54,26 +54,20 @@ export const Seo = (props: SeoProps) => {
       <meta property='og:title' content={meta.title} />
       <meta name='image' property='og:image' content={meta.image} />
       {/* Twitter */}
-      <meta name='twitter:card' content='summary_large_image' />
-      <meta name='twitter:site' content='@th_clarence' />
+      <meta name='twitter:card' content='app' />
+      <meta name='twitter:site' content='@_hnqg' />
+      <meta name='twitter:creator' content='@_hnqg' />
       <meta name='twitter:title' content={meta.title} />
       <meta name='twitter:description' content={meta.description} />
       <meta name='twitter:image' content={meta.image} />
-      {meta.date && (
-        <>
-          <meta property='article:published_time' content={meta.date} />
-          <meta name='publish_date' property='og:publish_date' content={meta.date} />
-          <meta name='author' property='article:author' content='Theodorus Clarence' />
-        </>
-      )}
 
       {/* Favicons */}
       {favicons.map((linkProps) => (
         <link key={linkProps.href} {...linkProps} />
       ))}
-      <meta name='msapplication-TileColor' content='#212528 ' />
+      <meta name='msapplication-TileColor' content='#111114' />
       <meta name='msapplication-TileImage' content='/favicon/ms-icon-144x144.png' />
-      <meta name='theme-color' content='#212528' />
+      <meta name='theme-color' content='#111114' />
     </Head>
   );
 };

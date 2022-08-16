@@ -87,15 +87,20 @@ export function useGuess({
     const keyboardLetterStateLettersCount: { [letter: string]: number } = {};
 
     guess.split('').forEach((letter) => {
-      if (guessLettersCount[letter]) return (guessLettersCount[letter] += 1);
+      if (guessLettersCount[letter]) {
+        guessLettersCount[letter] += 1;
+        return;
+      }
       guessLettersCount[letter] = 1;
     });
 
     Object.entries(keyboardLetterState).forEach(([letter, state]) => {
       state.forEach((st) => {
         if (st.state === 'match' || st.state === 'present') {
-          if (keyboardLetterStateLettersCount[letter])
-            return (keyboardLetterStateLettersCount[letter] += 1);
+          if (keyboardLetterStateLettersCount[letter]) {
+            keyboardLetterStateLettersCount[letter] += 1;
+            return;
+          }
           keyboardLetterStateLettersCount[letter] = 1;
         }
       });
@@ -103,7 +108,10 @@ export function useGuess({
 
     if (!_.isEqual(guessLettersCount, keyboardLetterStateLettersCount)) {
       Object.keys(keyboardLetterStateLettersCount).forEach((letter) => {
-        if (guessLettersCount[letter] < keyboardLetterStateLettersCount[letter]) {
+        if (
+          !guessLettersCount[letter] ||
+          guessLettersCount[letter] < keyboardLetterStateLettersCount[letter]
+        ) {
           isValid = false;
           errorMessages.push(`Faltando: ${letter}`);
         }
@@ -213,7 +221,9 @@ export function useGuess({
   useEffect(() => {
     let id: NodeJS.Timeout;
     if (showInvalidGuess[0]) {
-      id = setTimeout(() => setShowInvalidGuess([false, []]), 3000);
+      id = setTimeout(() => {
+        setShowInvalidGuess([false, []]);
+      }, 3000);
     }
 
     return () => {

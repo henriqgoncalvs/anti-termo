@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -50,14 +51,32 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className='flex flex-col flex-1 items-center justify-center'>
-        {showInvalidGuess[0] && showInvalidGuess[1].map((error) => <p key={error}>{error}</p>)}
-        <div className='grid grid-rows-6 gap-[0.3rem] mb-4'>
+      <div className='flex flex-col flex-1 items-center justify-center relative overflow-hidden'>
+        <AnimatePresence>
+          {showInvalidGuess[0] && (
+            <motion.div
+              className='w-full absolute top-0 flex flex-col gap-1 items-center'
+              initial={{ opacity: 0, y: -100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -100 }}
+            >
+              {showInvalidGuess[1].map((error) => (
+                <p
+                  key={error}
+                  className='bg-primary-500 text-sm font-semibold p-2 rounded-md mb-1 last:mb-0'
+                >
+                  {error}
+                </p>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className='grid grid-rows-5 gap-[0.3rem] mb-4 px-3'>
           {rows?.map((letters, index) => (
             <WordRow
               key={index}
               letters={letters}
-              className={showInvalidGuess[0] && curRow === index ? `animate-bounce` : ``}
+              className={showInvalidGuess[0] && curRow === index ? `animate-rowshake` : ``}
             />
           ))}
         </div>

@@ -9,7 +9,7 @@ import gf from '@/lib/gf';
 
 import { useGameStore } from '@/store/game-store';
 
-import { getNextGameDate } from '@/utils/word-utils';
+import { getNextGameDate, getSolution } from '@/utils/word-utils';
 
 export const GameStateModal = ({
   isOpen,
@@ -92,6 +92,10 @@ export const GameStateModal = ({
                   </div>
                 </Dialog.Title>
                 <div className='my-6'>
+                  <div className='mb-6 p-3 bg-primary-800 rounded-md flex flex-col items-center'>
+                    <p className='text-xs'>A palavra do dia é</p>
+                    <span className='text-2xl font-black mt-2'>{getSolution().solution}</span>
+                  </div>
                   <p className='text-xs mb-2'>Próximo jogo</p>
                   <Countdown
                     date={getNextGameDate()}

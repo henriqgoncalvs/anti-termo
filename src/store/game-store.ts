@@ -17,7 +17,6 @@ export type KeyboardLetterStateTypes = 'miss' | 'present' | 'match';
 
 interface GameStoreState {
   state: {
-    solution: string;
     tries: Array<Letter[]>;
     gameState: 'playing' | 'won' | 'lost';
     curRow: number;
@@ -34,8 +33,9 @@ export const useGameStore = create<GameStoreState>()(
     (set, get) => {
       const addTry = (guess: string) => {
         const normGuess = normalizeGuess(guess);
+        const solution = getSolution();
 
-        const result = computeGuess(normGuess, get().state.solution, get().state.curRow);
+        const result = computeGuess(normGuess, solution.solution, get().state.curRow);
 
         const didLose = result.every((l) => l.state === 'match');
 
@@ -91,7 +91,6 @@ export const useGameStore = create<GameStoreState>()(
         set(() => ({
           ...get(),
           state: {
-            ...getSolution(),
             tries: [
               [
                 { letter: '', cursor: { x: 0, y: 0 } },
@@ -140,7 +139,6 @@ export const useGameStore = create<GameStoreState>()(
 
       return {
         state: {
-          ...getSolution(),
           tries: [
             [
               { letter: '', cursor: { x: 0, y: 0 } },

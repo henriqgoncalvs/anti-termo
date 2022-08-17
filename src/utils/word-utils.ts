@@ -5,7 +5,7 @@ export type Normalized = keyof typeof words.normalized;
 export const WORD_LENGTH = 5;
 
 // 1 January 2022 Game Epoch
-export const firstGameDate = new Date(2022, 7, 15);
+export const firstGameDate = new Date(2022, 7, 11);
 
 export const getToday = () => {
   const today = new Date();

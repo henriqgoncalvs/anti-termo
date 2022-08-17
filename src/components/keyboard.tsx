@@ -33,7 +33,9 @@ type KeyboardP = {
 };
 
 export const Keyboard = ({ onClick: onClickProps }: KeyboardP) => {
-  const { keyboardLetterState } = useGameStore();
+  const {
+    state: { keyboardLetterState },
+  } = useGameStore();
   const [keyboardLetterStateCopy, setKeyboardLetterStateCopy] = useState<{
     [letter: string]: {
       state: KeyboardLetterStateTypes;

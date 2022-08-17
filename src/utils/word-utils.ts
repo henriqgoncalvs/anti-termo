@@ -5,10 +5,17 @@ export type Normalized = keyof typeof words.normalized;
 export const WORD_LENGTH = 5;
 
 // 1 January 2022 Game Epoch
-export const firstGameDate = new Date(2022, 7, 12);
+export const firstGameDate = new Date(2022, 7, 15);
 
-export const getIndex = (today: Date) => {
+export const getToday = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+};
+
+export const getIndex = () => {
   const start = new Date(firstGameDate);
+  const today = getToday();
   let index = -1;
   do {
     index++;
@@ -18,14 +25,8 @@ export const getIndex = (today: Date) => {
   return index;
 };
 
-export const getToday = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
-};
-
 export const getLastGameDate = () => {
-  const t = new Date(getToday());
+  const t = getToday();
   t.setHours(0, 0, 0);
   const daysSinceLastGame = (t.getDay() - firstGameDate.getDay() + 7) % 1;
   const lastDate = new Date(t);
@@ -34,14 +35,14 @@ export const getLastGameDate = () => {
 };
 
 export const getNextGameDate = () => {
-  const t = new Date(getToday());
+  const t = getToday();
   t.setHours(0, 0, 0);
   t.setDate(getLastGameDate().getDate() + 1);
   return t;
 };
 
 export const getSolution = () => {
-  const index = getIndex(getToday());
+  const index = getIndex();
 
   const randomWord = words.valid[index % words.valid.length];
 

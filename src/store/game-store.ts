@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 
 import {
   computeGuess,
+  getIndex,
   getSolution,
   Letter,
   normalizeGuess,
@@ -15,12 +16,16 @@ export const GUESS_LENGTH = 5;
 export type KeyboardLetterStateTypes = 'miss' | 'present' | 'match';
 
 interface GameStoreState {
-  solution: string;
-  tries: Array<Letter[]>;
-  gameState: 'playing' | 'won' | 'lost';
+  state: {
+    solution: string;
+    tries: Array<Letter[]>;
+    gameState: 'playing' | 'won' | 'lost';
+    curRow: number;
+    keyboardLetterState: { [letter: string]: { state: KeyboardLetterStateTypes; index: number }[] };
+    curDay: number;
+  };
   addTry: (guess: string) => void;
-  curRow: number;
-  keyboardLetterState: { [letter: string]: { state: KeyboardLetterStateTypes; index: number }[] };
+  init: () => void;
 }
 
 export const useGameStore = create<GameStoreState>()(
@@ -29,17 +34,17 @@ export const useGameStore = create<GameStoreState>()(
       const addTry = (guess: string) => {
         const normGuess = normalizeGuess(guess);
 
-        const result = computeGuess(normGuess, get().solution, get().curRow);
+        const result = computeGuess(normGuess, get().state.solution, get().state.curRow);
 
         const didLose = result.every((l) => l.state === 'match');
 
-        const tries = get().tries;
+        const tries = get().state.tries;
 
-        tries[get().curRow] = result;
+        tries[get().state.curRow] = result;
 
-        const newCurRow = get().curRow + 1;
+        const newCurRow = get().state.curRow + 1;
 
-        const keyboardLetterState = get().keyboardLetterState;
+        const keyboardLetterState = get().state.keyboardLetterState;
 
         _.uniq(result).forEach((r) => {
           keyboardLetterState[r.letter] = [];
@@ -64,56 +69,121 @@ export const useGameStore = create<GameStoreState>()(
         });
 
         set(() => ({
-          curRow: newCurRow,
-          tries,
-          keyboardLetterState: keyboardLetterState,
-          gameState: didLose ? 'lost' : newCurRow === GUESS_LENGTH ? 'won' : 'playing',
+          ...get(),
+          state: {
+            ...get().state,
+            curRow: newCurRow,
+            tries,
+            keyboardLetterState: keyboardLetterState,
+            gameState: didLose ? 'lost' : newCurRow === GUESS_LENGTH ? 'won' : 'playing',
+          },
+        }));
+      };
+
+      const init = () => {
+        const curDay = getIndex();
+
+        if (get()?.state?.curDay === curDay) {
+          return;
+        }
+
+        set(() => ({
+          ...get(),
+          state: {
+            ...getSolution(),
+            tries: [
+              [
+                { letter: '', cursor: { x: 0, y: 0 } },
+                { letter: '', cursor: { x: 1, y: 0 } },
+                { letter: '', cursor: { x: 2, y: 0 } },
+                { letter: '', cursor: { x: 3, y: 0 } },
+                { letter: '', cursor: { x: 4, y: 0 } },
+              ],
+              [
+                { letter: '', cursor: { x: 0, y: 1 } },
+                { letter: '', cursor: { x: 1, y: 1 } },
+                { letter: '', cursor: { x: 2, y: 1 } },
+                { letter: '', cursor: { x: 3, y: 1 } },
+                { letter: '', cursor: { x: 4, y: 1 } },
+              ],
+              [
+                { letter: '', cursor: { x: 0, y: 2 } },
+                { letter: '', cursor: { x: 1, y: 2 } },
+                { letter: '', cursor: { x: 2, y: 2 } },
+                { letter: '', cursor: { x: 3, y: 2 } },
+                { letter: '', cursor: { x: 4, y: 2 } },
+              ],
+              [
+                { letter: '', cursor: { x: 0, y: 3 } },
+                { letter: '', cursor: { x: 1, y: 3 } },
+                { letter: '', cursor: { x: 2, y: 3 } },
+                { letter: '', cursor: { x: 3, y: 3 } },
+                { letter: '', cursor: { x: 4, y: 3 } },
+              ],
+              [
+                { letter: '', cursor: { x: 0, y: 4 } },
+                { letter: '', cursor: { x: 1, y: 4 } },
+                { letter: '', cursor: { x: 2, y: 4 } },
+                { letter: '', cursor: { x: 3, y: 4 } },
+                { letter: '', cursor: { x: 4, y: 4 } },
+              ],
+            ],
+            curRow: 0,
+            keyboardLetterState: {},
+            gameState: 'playing',
+            curDay,
+          },
+          addTry,
         }));
       };
 
       return {
-        ...getSolution(),
-        tries: [
-          [
-            { letter: '', cursor: { x: 0, y: 0 } },
-            { letter: '', cursor: { x: 1, y: 0 } },
-            { letter: '', cursor: { x: 2, y: 0 } },
-            { letter: '', cursor: { x: 3, y: 0 } },
-            { letter: '', cursor: { x: 4, y: 0 } },
+        state: {
+          ...getSolution(),
+          tries: [
+            [
+              { letter: '', cursor: { x: 0, y: 0 } },
+              { letter: '', cursor: { x: 1, y: 0 } },
+              { letter: '', cursor: { x: 2, y: 0 } },
+              { letter: '', cursor: { x: 3, y: 0 } },
+              { letter: '', cursor: { x: 4, y: 0 } },
+            ],
+            [
+              { letter: '', cursor: { x: 0, y: 1 } },
+              { letter: '', cursor: { x: 1, y: 1 } },
+              { letter: '', cursor: { x: 2, y: 1 } },
+              { letter: '', cursor: { x: 3, y: 1 } },
+              { letter: '', cursor: { x: 4, y: 1 } },
+            ],
+            [
+              { letter: '', cursor: { x: 0, y: 2 } },
+              { letter: '', cursor: { x: 1, y: 2 } },
+              { letter: '', cursor: { x: 2, y: 2 } },
+              { letter: '', cursor: { x: 3, y: 2 } },
+              { letter: '', cursor: { x: 4, y: 2 } },
+            ],
+            [
+              { letter: '', cursor: { x: 0, y: 3 } },
+              { letter: '', cursor: { x: 1, y: 3 } },
+              { letter: '', cursor: { x: 2, y: 3 } },
+              { letter: '', cursor: { x: 3, y: 3 } },
+              { letter: '', cursor: { x: 4, y: 3 } },
+            ],
+            [
+              { letter: '', cursor: { x: 0, y: 4 } },
+              { letter: '', cursor: { x: 1, y: 4 } },
+              { letter: '', cursor: { x: 2, y: 4 } },
+              { letter: '', cursor: { x: 3, y: 4 } },
+              { letter: '', cursor: { x: 4, y: 4 } },
+            ],
           ],
-          [
-            { letter: '', cursor: { x: 0, y: 1 } },
-            { letter: '', cursor: { x: 1, y: 1 } },
-            { letter: '', cursor: { x: 2, y: 1 } },
-            { letter: '', cursor: { x: 3, y: 1 } },
-            { letter: '', cursor: { x: 4, y: 1 } },
-          ],
-          [
-            { letter: '', cursor: { x: 0, y: 2 } },
-            { letter: '', cursor: { x: 1, y: 2 } },
-            { letter: '', cursor: { x: 2, y: 2 } },
-            { letter: '', cursor: { x: 3, y: 2 } },
-            { letter: '', cursor: { x: 4, y: 2 } },
-          ],
-          [
-            { letter: '', cursor: { x: 0, y: 3 } },
-            { letter: '', cursor: { x: 1, y: 3 } },
-            { letter: '', cursor: { x: 2, y: 3 } },
-            { letter: '', cursor: { x: 3, y: 3 } },
-            { letter: '', cursor: { x: 4, y: 3 } },
-          ],
-          [
-            { letter: '', cursor: { x: 0, y: 4 } },
-            { letter: '', cursor: { x: 1, y: 4 } },
-            { letter: '', cursor: { x: 2, y: 4 } },
-            { letter: '', cursor: { x: 3, y: 4 } },
-            { letter: '', cursor: { x: 4, y: 4 } },
-          ],
-        ],
-        curRow: 0,
-        keyboardLetterState: {},
-        gameState: 'playing',
+          curRow: 0,
+          keyboardLetterState: {},
+          gameState: 'playing',
+          curDay: 0,
+        },
         addTry,
+        init,
       };
     },
     {

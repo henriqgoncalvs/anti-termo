@@ -18,7 +18,9 @@ export const GameStateModal = ({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { gameState } = useGameStore();
+  const {
+    state: { gameState },
+  } = useGameStore();
   const [gif, setGif] = useState<IGif | null>(null);
 
   useEffect(() => {

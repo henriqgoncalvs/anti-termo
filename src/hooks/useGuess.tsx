@@ -19,7 +19,10 @@ export function useGuess({
 }: {
   setRows: Dispatch<SetStateAction<Letter[][] | undefined>>;
 }): [(letter: string) => void, [boolean, string[]]] {
-  const { addTry, curRow, keyboardLetterState, tries, gameState } = useGameStore();
+  const {
+    state: { curRow, keyboardLetterState, tries, gameState },
+    addTry,
+  } = useGameStore();
 
   const [curGuess, setCurGuess] = useState('');
 

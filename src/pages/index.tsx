@@ -14,7 +14,10 @@ import { useGameStore } from '@/store/game-store';
 import { Letter } from '@/utils/word-utils';
 
 const Home: NextPage = () => {
-  const { curRow, tries, gameState } = useGameStore();
+  const {
+    state: { curRow, tries, gameState },
+    init,
+  } = useGameStore();
 
   const [rows, setRows] = useState<Letter[][] | undefined>(undefined);
 
@@ -41,13 +44,17 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     useGameStore.subscribe((state) => {
-      setRows([...state.tries]);
+      setRows([...state.state.tries]);
 
-      if (state.gameState === 'won' || state.gameState === 'lost') {
+      if (state.state.gameState === 'won' || state.state.gameState === 'lost') {
         setIsGameStateModalOpen(true);
       }
     });
   }, []);
+
+  useEffect(() => {
+    init();
+  }, [init]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { useGameStore } from '@/store/game-store';
 
 import { AboutModal } from './modals/about-modal';
 import { HowToPlayModal } from './modals/how-to-play-modal';
@@ -28,6 +30,16 @@ const HeaderButton = ({ children, onClick, ...restProps }: HeaderP) => {
 const Header = () => {
   const [isHowToPlayModalOpen, setIsHowToPlayModalOpen] = useState<boolean>(false);
   const [isAboutModal, setIsAboutModal] = useState<boolean>(false);
+
+  const {
+    state: { curDay },
+  } = useGameStore();
+
+  useEffect(() => {
+    if (curDay === 0) {
+      setIsHowToPlayModalOpen(true);
+    }
+  }, [curDay]);
 
   return (
     <header className='bg-primary-700 p-5 w-full'>

@@ -26,6 +26,7 @@ interface GameStoreState {
   };
   addTry: (guess: string) => void;
   init: () => void;
+  // TODO stats: { games: 3, wins: 2 }
 }
 
 export const useGameStore = create<GameStoreState>()(

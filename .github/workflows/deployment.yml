@@ -4,68 +4,32 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request: {}
 
 jobs:
-  lint:
-    name: ⬣ ESLint
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
+  ci:
+    name: Setup Node
+    uses: actions/setup-node@v1
+    with:
+      node-version: 14.x
 
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
+    uses: actions/cache@v2
+    id: yarn-cache
+    with:
+      path: |
+        ~/cache
+        !~/cache/exclude
+        **/node_modules
+      key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      restore-keys: |
+        ${{ runner.os }}-yarn-
 
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+    name: Install dependencies
+    run: yarn
 
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+    name: Linting
+    run: yarn lint
 
-      - name: 🔬 Lint
-        run: yarn lint:strict
-
-  typecheck:
-    name: ʦ TypeScript
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
-
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-
-      - name: 🔎 Type check
-        run: yarn typecheck
-
-  prettier:
-    name: 💅 Prettier
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
-
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-
-      - name: 🔎 Type check
-        run: yarn format:check
+    name: Build
+    run: yarn build

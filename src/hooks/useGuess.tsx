@@ -178,10 +178,10 @@ export function useGuess({
           if (
             keyLetStateIndex &&
             keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'present' &&
-            !solution.includes(letter)
+            !guess.includes(letter)
           ) {
             isValid = false;
-            errorMessages.push(`Obrigatório: ${keyLetStateIndex[0]} 2`);
+            errorMessages.push(`Obrigatório: ${keyLetStateIndex[0]}`);
           }
         });
       }

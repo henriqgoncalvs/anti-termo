@@ -3,7 +3,6 @@ lockfileVersion: 5.4
 specifiers:
   '@commitlint/cli': ^17.0.3
   '@commitlint/config-conventional': ^17.0.3
-  '@formkit/auto-animate': 1.0.0-beta.1
   '@giphy/js-fetch-api': ^4.4.0
   '@giphy/js-types': ^4.2.1
   '@giphy/react-components': ^6.1.0
@@ -38,7 +37,6 @@ specifiers:
   zustand: ^4.0.0
 
 dependencies:
-  '@formkit/auto-animate': 1.0.0-beta.1_react@18.1.0
   '@giphy/js-fetch-api': 4.4.0
   '@giphy/react-components': 6.1.0_ohobp6rpsmerwlq5ipwfh5yigy
   '@headlessui/react': 1.6.6_ef5jwxihqo6n7gxfmzogljlgcm
@@ -498,20 +496,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /@formkit/auto-animate/1.0.0-beta.1_react@18.1.0:
-    resolution: {integrity: sha512-I3OWOBaPZKSJL4bsooXI8kC3q7bcgibD2oML0P/Lir6MnbvUe/0/7EH8br024juvM/Ulm9C9xGx9CJUQYrOWSA==}
-    peerDependencies:
-      react: ^16.8.0
-      vue: ^3.0.0
-    peerDependenciesMeta:
-      react:
-        optional: true
-      vue:
-        optional: true
-    dependencies:
-      react: 18.1.0
-    dev: false
 
   /@giphy/js-analytics/4.1.1:
     resolution: {integrity: sha512-C4GOSYHCkgG4CcEZ48Zepa4HMrFx1ZMLso28ms681pi1Zb9cA6I7u3rBywcLNeS+oi4Ny0lmceygIDtMBy3uyQ==}

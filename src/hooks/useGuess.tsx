@@ -8,7 +8,7 @@ import { KEYS } from '@/components/keyboard';
 
 import { useGameStore } from '@/store/game-store';
 
-import { Letter, Normalized, WORD_LENGTH } from '@/utils/word-utils';
+import { getSolution, Letter, Normalized, WORD_LENGTH } from '@/utils/word-utils';
 
 export const VALID_KEYS = KEYS.flatMap((row) => row.map((key) => key.toLowerCase())).filter(
   Boolean,
@@ -23,6 +23,7 @@ export function useGuess({
     state: { curRow, keyboardLetterState, tries, gameState },
     addTry,
   } = useGameStore();
+  const { solution } = getSolution();
 
   const [curGuess, setCurGuess] = useState('');
 
@@ -130,17 +131,17 @@ export function useGuess({
             st.state === 'match' &&
             st.index !== index &&
             !letterState.some((ls) => ls.state === 'present') &&
-            guess[index] !== letter
+            solution[index] !== letter
           ) {
             isValid = false;
-            errorMessages.push(`Posição errada: ${letter} 1`);
+            errorMessages.push(`Posição errada: ${letter}`);
           }
 
           if (st.state === 'present') {
             if (
-              !guess.includes(letter) ||
+              !solution.includes(letter) ||
               (letterState.find((ls) => ls.state === 'match') !== undefined &&
-                guess[letterState.find((ls) => ls.state === 'match')?.index || 0] !== letter)
+                solution[letterState.find((ls) => ls.state === 'match')?.index || 0] !== letter)
             ) {
               isValid = false;
               errorMessages.push(`Obrigatório Repetir: ${letter}`);

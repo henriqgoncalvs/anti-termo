@@ -17,4 +17,4 @@ Em AntiTermo seu objetivo é errar a palavra do dia. Fácil, não é? Bom, nem t
 - Framer Motion
 - E muita, mas muita lógica!
 
-🐲 From [Henrique Gonçalves](https://github.com/hnqg) (or hnqg if you find better), you can find me at [![Instagram Badge](https://img.shields.io/badge/Instagram-E4405F?logo=instagram&logoColor=white)](https://www.instagram.com/_hnqg/) [![Linkedin Badge](https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/henriiqueg/)
+🐲 From [Henrique Gonçalves](https://github.com/hnqg) (or hnqg if you prefer), you can find me at [![Instagram Badge](https://img.shields.io/badge/Instagram-E4405F?logo=instagram&logoColor=white)](https://www.instagram.com/_hnqg/) [![Linkedin Badge](https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/henriiqueg/)

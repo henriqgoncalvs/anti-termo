@@ -49,7 +49,9 @@ export const HowToPlayModal = ({
                   Como que joga isso? 🤔
                 </Dialog.Title>
                 <div className='my-6'>
-                  <p className='text-xs mb-2'>Erre a palavra do dia em 5 tentativas.</p>
+                  <p className='text-md mb-2'>
+                    <strong>Erre</strong> a palavra do dia em 5 tentativas.
+                  </p>
                   <p className='text-xs mb-2 font-extrabold'>Peraí, errar?</p>
                   <p className='text-xs mb-2'>
                     Isso mesmo, seu objetivo em <strong>Anti Termo</strong> é não acertar a palavra

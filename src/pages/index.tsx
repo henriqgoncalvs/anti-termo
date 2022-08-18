@@ -77,7 +77,7 @@ const Home: NextPage = () => {
         <AnimatePresence>
           {showInvalidGuess[0] && (
             <motion.div
-              className='w-full absolute top-0 flex flex-col gap-1 items-center'
+              className='w-full absolute top-0 flex flex-col gap-1 items-center z-50'
               initial={{ opacity: 0, y: -100 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -100 }}

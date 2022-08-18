@@ -178,7 +178,7 @@ export function useGuess({
           if (
             keyLetStateIndex &&
             keyLetStateIndex[1].filter((kls) => kls.index === index)[0]?.state === 'present' &&
-            !guess.includes(letter)
+            !solution.includes(letter)
           ) {
             isValid = false;
             errorMessages.push(`Obrigatório: ${keyLetStateIndex[0]} 2`);

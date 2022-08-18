@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Repository Name
+        run: echo ${{ github.repository }}
+
       - name: Setup Node
         uses: actions/setup-node@v1
         with:

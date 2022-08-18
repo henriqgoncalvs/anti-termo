@@ -32,7 +32,7 @@ jobs:
         run: yarn
 
       - name: Linting
-        run: yarn lint
+        run: yarn lint:strict
 
       - name: Build
         run: yarn build
